@@ -1,4 +1,4 @@
-import { eth, contracts } from 'decentraland-eth'
+import { contracts } from 'decentraland-eth'
 import { env } from 'decentraland-commons'
 
 import { getParcelIdFromEvent } from 'lib/reducers/utils'
@@ -15,26 +15,32 @@ export function getContractsToConnect() {
   return contractsToConnect
 }
 
-function getContractsObject() {
+export function getContractsObject() {
+  let network = 'MAINNET'
+  if ((window as any).web3.version.network !== '1') {
+    network = 'ROPSTEN'
+  }
   return Object.freeze({
     MANAToken: {
-      address: env.get('REACT_APP_MANA_TOKEN_CONTRACT_ADDRESS'),
+      address: env.get(`REACT_APP_MANA_TOKEN_CONTRACT_ADDRESS_${network}`),
       eventNames: ['Transfer']
     },
     LegacyMarketplace: {
-      address: env.get('REACT_APP_LEGACY_MARKETPLACE_CONTRACT_ADDRESS'),
+      address: env.get(
+        `REACT_APP_LEGACY_MARKETPLACE_CONTRACT_ADDRESS_${network}`
+      ),
       eventNames: ['AuctionCreated', 'AuctionSuccessful', 'AuctionCancelled']
     },
     Marketplace: {
-      address: env.get('REACT_APP_MARKETPLACE_CONTRACT_ADDRESS'),
+      address: env.get(`REACT_APP_MARKETPLACE_CONTRACT_ADDRESS_${network}`),
       eventNames: ['OrderCreated', 'OrderSuccessful', 'OrderCancelled']
     },
     LANDRegistry: {
-      address: env.get('REACT_APP_LAND_REGISTRY_CONTRACT_ADDRESS'),
+      address: env.get(`REACT_APP_LAND_REGISTRY_CONTRACT_ADDRESS_${network}`),
       eventNames: ['Update', 'Transfer', 'UpdateOperator']
     },
     EstateRegistry: {
-      address: env.get('REACT_APP_ESTATE_REGISTRY_CONTRACT_ADDRESS'),
+      address: env.get(`REACT_APP_ESTATE_REGISTRY_CONTRACT_ADDRESS_${network}`),
       eventNames: [
         'CreateEstate',
         'AddLand',
@@ -93,53 +99,32 @@ export function getEventNames(): any {
   )
 }
 
-export async function getEvents() {
-  const contractsData = getContractsObject()
-  const events: any[] = []
-  const promises = []
-
-  for (const contractName in contractsData) {
-    const eventNames = contractsData[contractName].eventNames
-    for (let eventName of eventNames) {
-      promises.push(
-        new Promise((resolve, reject) => {
-          const event = eth.getContract(contractName).getEvent(eventName)
-          event['getAllByType'](
-            { fromBlock: 0, toBlock: 'latest' },
-            (error: any, logs: any[]) => {
-              if (error) reject(error)
-              events.push(...logs)
-              resolve(events)
-            }
-          )
-        })
-      )
-    }
-  }
-  await Promise.all(promises)
-  events.sort(orderAlgo)
-  return events
-}
-
-function orderAlgo(a: any, b: any) {
+export function orderAlgo(a: any, b: any) {
   if (
     a.blockNumber < b.blockNumber ||
     (a.blockNumber === b.blockNumber && a.transactionIndex < b.transactionIndex)
   )
-    return -1
+    return 1
   if (
     a.blockNumber > b.blockNumber ||
     (a.blockNumber === b.blockNumber && a.transactionIndex > b.transactionIndex)
   )
-    return 1
+    return -1
   return 0
 }
 
-export async function getParcelIdsFromEvent(events: any): Promise<any> {
+export async function getParcelIdsFromEvent(
+  events: any,
+  parcelsIds: any
+): Promise<any> {
+  console.log(events)
   const parcelsByIds = {}
   for (let event of events) {
     const { assetId, landId, _landId } = event.args
-    if (assetId || landId || _landId) {
+    if (
+      (assetId || landId || _landId) &&
+      (!parcelsIds || !parcelsIds[assetId || landId || _landId])
+    ) {
       try {
         const parcelId = await getParcelIdFromEvent(event)
         parcelsByIds[assetId || landId || _landId] = parcelId

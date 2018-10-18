@@ -6,13 +6,15 @@ import {
   FETCH_EVENTS_FAILURE,
   FetchEventsRequestAction,
   FetchEventsSuccessAction,
-  FetchEventsFailureAction
+  FetchEventsFailureAction,
+  FetchEventSuccessAction
 } from './actions'
 
 export type EventReducerAction =
   | FetchEventsSuccessAction
   | FetchEventsFailureAction
   | FetchEventsRequestAction
+  | FetchEventSuccessAction
 
 export function data(
   state = { events: [], parcelsIds: {} },
@@ -23,8 +25,11 @@ export function data(
       const { events, parcelIds } = action.payload
       return {
         ...state,
-        events,
-        parcelIds
+        events: [...state.events, ...events],
+        parcelsIds: {
+          ...state.parcelsIds,
+          ...parcelIds
+        }
       }
     }
     default:

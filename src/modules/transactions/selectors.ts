@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect'
+
 import { RootState } from 'types'
 import { getEvents, getParcelIds } from 'modules/events/selectors'
+import { orderAlgo } from 'modules/events/utils'
 import reducers from 'lib/reducers'
 
 export const getState = (state: RootState) => state.transactions
@@ -16,6 +18,7 @@ export const getTransactionByAddress = (address: string) =>
     getEvents,
     getParcelIds,
     (txs, events, parcelIds) => {
+      console.log(events.slice(-1))
       const strEvents: string[] = []
       if (!txs || !txs[address]) {
         return strEvents
@@ -26,10 +29,14 @@ export const getTransactionByAddress = (address: string) =>
         (e: any) => transactions[e.transactionHash]
       )
 
+      accountEvents.sort(orderAlgo)
+
       for (let event of accountEvents) {
         for (let r of reducers) {
           const { assetId, landId, _landId } = event.args
-          const parcelId = parcelIds[assetId || landId || _landId]
+          const parcelId = parcelIds
+            ? parcelIds[assetId || landId || _landId]
+            : ''
           let coordinate = ''
           if (parcelId) {
             coordinate = `(${parcelId[0]},${parcelId[1]})`

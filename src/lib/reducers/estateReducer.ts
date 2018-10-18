@@ -69,10 +69,9 @@ function reduceEstateRegistry(event: any, parcelId: any): string {
       return `[${name}] Transferring Estate with token id "${estateId}" ownership to "${_to}"`
     }
     case eventNames.UpdateOperator: {
-      const { _operator } = event.args
-      const estateId = event.args._assetId
+      const { _operator, _estateId } = event.args
 
-      return `[${name}] Updating Estate id: "${estateId}" operator: ${_operator}`
+      return `[${name}] Updating Estate id: "${_estateId}" operator: ${_operator}`
     }
     case eventNames.Update: {
       const { _assetId, _data } = event.args
