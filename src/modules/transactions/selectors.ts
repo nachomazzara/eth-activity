@@ -18,7 +18,6 @@ export const getTransactionByAddress = (address: string) =>
     getEvents,
     getParcelIds,
     (txs, events, parcelIds) => {
-      console.log(events.slice(-1))
       const strEvents: string[] = []
       if (!txs || !txs[address]) {
         return strEvents
@@ -30,13 +29,13 @@ export const getTransactionByAddress = (address: string) =>
       )
 
       accountEvents.sort(orderAlgo)
+      console.log(accountEvents[0], accountEvents[1])
 
       for (let event of accountEvents) {
         for (let r of reducers) {
-          const { assetId, landId, _landId } = event.args
-          const parcelId = parcelIds
-            ? parcelIds[assetId || landId || _landId]
-            : ''
+          const parcelIdArg =
+            event.args.assetId || event.args.landId || event.args._landId
+          const parcelId = parcelIds ? parcelIds[parcelIdArg] : ''
           let coordinate = ''
           if (parcelId) {
             coordinate = `(${parcelId[0]},${parcelId[1]})`
@@ -44,6 +43,8 @@ export const getTransactionByAddress = (address: string) =>
           strEvents.push((r as any)(event, coordinate))
         }
       }
+
+      console.log(strEvents.length)
 
       return strEvents.filter((str: string) => str.length > 0)
     }

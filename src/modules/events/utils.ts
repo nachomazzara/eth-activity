@@ -115,19 +115,16 @@ export function orderAlgo(a: any, b: any) {
 
 export async function getParcelIdsFromEvent(
   events: any,
-  parcelsIds: any
+  parcelIds: any
 ): Promise<any> {
-  console.log(events)
   const parcelsByIds = {}
   for (let event of events) {
-    const { assetId, landId, _landId } = event.args
-    if (
-      (assetId || landId || _landId) &&
-      (!parcelsIds || !parcelsIds[assetId || landId || _landId])
-    ) {
+    const parcelIdArg =
+      event.args.assetId || event.args.landId || event.args._landId
+    if (parcelIdArg && !parcelIds[parcelIdArg] && !parcelsByIds[parcelIdArg]) {
       try {
         const parcelId = await getParcelIdFromEvent(event)
-        parcelsByIds[assetId || landId || _landId] = parcelId
+        parcelsByIds[parcelIdArg] = parcelId
       } catch (e) {}
     }
   }

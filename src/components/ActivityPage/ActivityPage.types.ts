@@ -27,6 +27,7 @@ export type MapStateProps = {
   wallet: Partial<BaseWallet>
   events: any
   isLoading: boolean
+  address: BaseWallet['address']
 }
 
 export type MapDispatchProps = {

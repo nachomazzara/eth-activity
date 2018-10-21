@@ -38,13 +38,12 @@ export function publicationReducer(event: any, parcelId: any): string {
 function reduceMarketplace(event: any, parcelId: any): string {
   const name = event.event
   const assetType = getAssetTypeFromEvent(event)
-  const assetId = parcelId || getAssetIdFromEvent(event)
+  const assetId = assetType === 'LAND' ? parcelId : getAssetIdFromEvent(event)
 
   switch (name) {
     case eventNames.AuctionCreated:
     case eventNames.OrderCreated: {
       const contract_id = event.args.id
-
       return `[${name}] Creating publication ${contract_id} for ${assetType} ${assetId}`
     }
     case eventNames.AuctionSuccessful:
@@ -52,12 +51,12 @@ function reduceMarketplace(event: any, parcelId: any): string {
       const buyer = event.args.winner || event.args.buyer // winner is from the LegacyMarketplace
       const contract_id = event.args.id
 
-      return `[${name}] Publication ${contract_id} sold to ${buyer}`
+      return `[${name}] Publication ${contract_id} for ${assetType} ${assetId} sold to ${buyer}`
     }
     case eventNames.AuctionCancelled:
     case eventNames.OrderCancelled: {
       const contract_id = event.args.id
-      return `[${name}] Publication ${contract_id} cancelled`
+      return `[${name}] Publication ${contract_id} cancelled for ${assetType} ${assetId}`
     }
     default:
       return ''

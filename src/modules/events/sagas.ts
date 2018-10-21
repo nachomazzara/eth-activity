@@ -1,13 +1,11 @@
 import { CONNECT_WALLET_SUCCESS } from '@dapps/modules/wallet/actions'
-import { getAddress } from '@dapps/modules/wallet/selectors'
 import { takeEvery, put, call, select } from 'redux-saga/effects'
-import { eventChannel, delay } from 'redux-saga'
+import { eventChannel } from 'redux-saga'
 import { eth } from 'decentraland-eth'
 
 import { fetchEventsSuccess } from './actions'
 import { getParcelIdsFromEvent, getContractsObject } from './utils'
 import { getParcelIds } from './selectors'
-import { fetchTransactionsRequest } from 'modules/transactions/actions'
 
 let latestBlockNumber: number = 0
 
@@ -21,16 +19,11 @@ const listenEventsSaga = function*() {
 }
 
 function* handleEvents(events: any) {
-  const parcelsIds = yield select(getParcelIds)
-  const newParcelsIds = yield call(() =>
-    getParcelIdsFromEvent(events, parcelsIds)
+  const parcelIds = yield select(getParcelIds)
+  const newParcelIds = yield call(() =>
+    getParcelIdsFromEvent(events, parcelIds)
   )
-  yield put(fetchEventsSuccess(events, newParcelsIds))
-  if (events.length > 0 && latestBlockNumber <= events[0].blockNumber) {
-    const address = yield select(getAddress)
-    yield delay(60000)
-    yield put(fetchTransactionsRequest(address))
-  }
+  yield put(fetchEventsSuccess(events, newParcelIds))
 }
 
 function* createEventChannel() {

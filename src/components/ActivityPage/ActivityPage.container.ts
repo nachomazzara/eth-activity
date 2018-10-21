@@ -14,10 +14,14 @@ import {
   isLoading as isFetchingTransactions,
   getTransactionByAddress
 } from 'modules/transactions/selectors'
-import { fetchTransactionsRequest } from 'modules/transactions/actions'
+import {
+  fetchTransactionsRequest,
+  fetchTransactionsInBrackgroundRequest
+} from 'modules/transactions/actions'
 import ActivityPage from './ActivityPage'
 
-const mapState = (state: RootState): MapStateProps => {
+const mapState = (state: RootState, ownProps: Props): MapStateProps => {
+  const address = ownProps.match.params.address
   const isWalletConnected = isConnected(state)
   const wallet = getData(state)
   let events
@@ -30,7 +34,8 @@ const mapState = (state: RootState): MapStateProps => {
     isConnected: isWalletConnected,
     isLoading: isFetchingEvents(state) || isFetchingTransactions(state),
     wallet,
-    events
+    events,
+    address
   }
 }
 
@@ -41,7 +46,10 @@ const mapDispatch = (
   const address = ownProps.match.params.address
   return {
     onConnectWallet: () => dispatch(connectWalletRequest()),
-    onFetchTransaction: () => dispatch(fetchTransactionsRequest(address))
+    onFetchTransaction: (inBackground = false) =>
+      inBackground
+        ? dispatch(fetchTransactionsInBrackgroundRequest(address))
+        : dispatch(fetchTransactionsRequest(address))
   }
 }
 

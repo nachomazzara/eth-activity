@@ -1,13 +1,14 @@
-import { env } from 'decentraland-commons'
 import { eth } from 'decentraland-eth'
 
 export function getAssetTypeFromEvent(event: any) {
   const nftAddress = event.args.nftAddress
+  const LANDRegistry = eth.getContract('LANDRegistry')
+  const EstateRegistry = eth.getContract('EstateRegistry')
 
   switch (nftAddress) {
-    case env.get('ESTATE_REGISTRY_CONTRACT_ADDRESS'):
+    case EstateRegistry.address:
       return 'Estate'
-    case env.get('LAND_REGISTRY_CONTRACT_ADDRESS'): // Supports the old marketplace, default should be undefined when deprecated
+    case LANDRegistry.address: // Supports the old marketplace, default should be undefined when deprecated
     default:
       return 'LAND'
   }
@@ -15,11 +16,13 @@ export function getAssetTypeFromEvent(event: any) {
 
 export function getAssetIdFromEvent(event: any) {
   const nftAddress = event.args.nftAddress
+  const LANDRegistry = eth.getContract('LANDRegistry')
+  const EstateRegistry = eth.getContract('EstateRegistry')
 
   switch (nftAddress) {
-    case env.get('ESTATE_REGISTRY_CONTRACT_ADDRESS'):
+    case EstateRegistry.address:
       return event.args.assetId
-    case env.get('LAND_REGISTRY_CONTRACT_ADDRESS'): // Supports the old marketplace, default should be undefined when deprecated
+    case LANDRegistry.address: // Supports the old marketplace, default should be undefined when deprecated
     default:
       return null
   }

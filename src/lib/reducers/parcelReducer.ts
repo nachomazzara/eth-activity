@@ -23,11 +23,10 @@ export function parcelReducer(event: any, parcelId: any): string {
 
 function reduceLANDRegistry(event: any, parcelId: any): string {
   const name = event.event
-
   if (!parcelId) {
     return ''
   }
-  switch (event) {
+  switch (name) {
     case eventNames.Update: {
       const { data } = event.args
 

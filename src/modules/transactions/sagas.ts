@@ -9,13 +9,18 @@ import {
   fetchTransactionsSuccess,
   fetchTransactionsFailure,
   fetchTransactionsRequest,
-  FETCH_TRANSACTIONS_REQUEST
+  FETCH_TRANSACTIONS_REQUEST,
+  FETCH_TRANSACTIONS_BACKGROUND_REQUEST
 } from './actions'
 import { getTransactions } from './utils'
 
 export function* transactionsSaga() {
   yield takeEvery(CONNECT_WALLET_SUCCESS, handleWalletConnectSuccess)
   yield takeLatest(FETCH_TRANSACTIONS_REQUEST, handleFetchTransactions)
+  yield takeLatest(
+    FETCH_TRANSACTIONS_BACKGROUND_REQUEST,
+    handleFetchTransactions
+  )
 }
 
 function* handleWalletConnectSuccess(action: ConnectWalletSuccessAction) {

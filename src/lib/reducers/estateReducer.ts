@@ -53,14 +53,14 @@ function reduceEstateRegistry(event: any, parcelId: any): string {
       // const [x, y] = Parcel.splitId(parcelId)
       // const parcel = { x: Number(x), y: Number(y) }
 
-      return `[${name}] Updating Estate id: "${_estateId}" add land (${parcelId})`
+      return `[${name}] Updating Estate id: "${_estateId}" add land ${parcelId}`
     }
     case eventNames.RemoveLand: {
       if (!parcelId) return ''
 
       const { _estateId } = event.args
 
-      return `[${name}] Updating Estate id: "${_estateId}" remove land (${parcelId})`
+      return `[${name}] Updating Estate id: "${_estateId}" remove land ${parcelId}`
     }
     case eventNames.Transfer: {
       const { _to } = event.args

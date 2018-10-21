@@ -17,7 +17,7 @@ export type EventReducerAction =
   | FetchEventSuccessAction
 
 export function data(
-  state = { events: [], parcelsIds: {} },
+  state = { events: [], parcelIds: {} },
   action: EventReducerAction
 ) {
   switch (action.type) {
@@ -26,8 +26,8 @@ export function data(
       return {
         ...state,
         events: [...state.events, ...events],
-        parcelsIds: {
-          ...state.parcelsIds,
+        parcelIds: {
+          ...state.parcelIds,
           ...parcelIds
         }
       }
