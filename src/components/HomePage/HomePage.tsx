@@ -34,8 +34,10 @@ export default class HomePage extends React.Component<Props, State> {
     // nothing here
   }
 
+  handleOnChange = (e: any) => this.setState({ address: e.target.value })
+
   render() {
-    const { isConnecting, isConnected, wallet, onConnectWallet } = this.props
+    const { isConnecting, isConnected, onConnectWallet } = this.props
 
     return (
       <Segment>
@@ -45,24 +47,25 @@ export default class HomePage extends React.Component<Props, State> {
           <Field
             type={isConnected ? 'address' : 'text'}
             label={t('global.wallet')}
+            onChange={this.handleOnChange}
             value={
               isConnecting
                 ? t('global.connecting')
                 : isConnected
-                  ? wallet.address
-                  : t('hompe_page.no_wallet')
+                  ? this.state.address
+                  : t('global.no_wallet')
             }
             loading={isConnecting}
           />
 
           {isConnecting ? null : isConnected ? (
             <>
-              <Button primary type="submit" disabled={!isConnected}>
+              <Button primary={true} type="submit" disabled={!isConnected}>
                 {t('global.see_events')}
               </Button>
             </>
           ) : (
-            <Button primary onClick={onConnectWallet}>
+            <Button primary={true} onClick={onConnectWallet}>
               {t('global.reconnect')}
             </Button>
           )}

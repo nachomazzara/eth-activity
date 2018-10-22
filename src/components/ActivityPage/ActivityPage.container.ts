@@ -24,17 +24,13 @@ const mapState = (state: RootState, ownProps: Props): MapStateProps => {
   const address = ownProps.match.params.address
   const isWalletConnected = isConnected(state)
   const wallet = getData(state)
-  let events
-  if (wallet.address) {
-    events = getTransactionByAddress(wallet.address)(state)
-  }
 
   return {
     isConnecting: isConnecting(state),
     isConnected: isWalletConnected,
     isLoading: isFetchingEvents(state) || isFetchingTransactions(state),
+    events: getTransactionByAddress(address)(state),
     wallet,
-    events,
     address
   }
 }

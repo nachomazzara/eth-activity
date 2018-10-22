@@ -4,11 +4,12 @@
     "es": "Spanish"
   },
   "global": {
-    "loading": "Loading",
-    "wallet": "Wallet",
-    "reconnect": "Reconnect",
     "connecting": "Connecting",
-    "see_events": "See Events"
+    "loading": "Loading",
+    "no_wallet": "No wallet connected. Please unlock metamask",
+    "reconnect": "Reconnect",
+    "see_events": "See Events",
+    "wallet": "Wallet"
   },
   "transaction": {
     "buy": "You bought {parcel_link}",

@@ -1,7 +1,8 @@
 import { contracts } from 'decentraland-eth'
 import { getContractAddresses, getEventNames } from 'modules/events/utils'
 
-let contractAddresses, eventNames: any
+let contractAddresses: any
+let eventNames: any
 
 export function parcelReducer(event: any, parcelId: any): string {
   const { address } = event

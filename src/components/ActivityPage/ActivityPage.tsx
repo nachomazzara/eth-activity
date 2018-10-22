@@ -5,7 +5,7 @@ import { Props, State } from './ActivityPage.types'
 import { Loader } from 'decentraland-ui'
 // import './ActivityPage.css'
 
-const offset_minutes = 60 * 1000 * 4
+const offsetMinutes = 60 * 1000 * 4
 
 export default class ActivityPage extends React.PureComponent<Props, State> {
   fetchTransactionInterval: any
@@ -15,7 +15,7 @@ export default class ActivityPage extends React.PureComponent<Props, State> {
   componentWillMount() {
     this.props.onFetchTransaction()
     this.fetchTransactionInterval = setInterval(() => {
-      if (this.isUserThere || this.mountedTime < Date.now() + offset_minutes) {
+      if (this.isUserThere || this.mountedTime < Date.now() + offsetMinutes) {
         this.isUserThere = false
         this.props.onFetchTransaction(true)
       }
@@ -50,7 +50,7 @@ export default class ActivityPage extends React.PureComponent<Props, State> {
     return (
       <div className="ActivityPage">
         {!events || isConnecting || isLoading ? (
-          <Loader active size="massive" />
+          <Loader active={true} size="massive" />
         ) : (
           events.map((event: any, index: number) => (
             <p
