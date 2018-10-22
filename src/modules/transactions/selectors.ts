@@ -29,7 +29,6 @@ export const getTransactionByAddress = (address: string) =>
       )
 
       accountEvents.sort(orderAlgo)
-      console.log(accountEvents[0], accountEvents[1])
 
       for (let event of accountEvents) {
         for (let r of reducers) {
@@ -43,9 +42,6 @@ export const getTransactionByAddress = (address: string) =>
           strEvents.push((r as any)(event, coordinate))
         }
       }
-
-      console.log(strEvents.length)
-
       return strEvents.filter((str: string) => str.length > 0)
     }
   )
