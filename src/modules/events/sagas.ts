@@ -4,7 +4,11 @@ import { eventChannel } from 'redux-saga'
 import { eth } from 'decentraland-eth'
 
 import { fetchEventsSuccess } from './actions'
-import { getParcelIdsFromEvent, getContractsObject } from './utils'
+import {
+  getParcelIdsFromEvents,
+  getContractsObject,
+  getLoansFromEvents
+} from './utils'
 import { getParcelIds } from './selectors'
 
 let latestBlockNumber: number = 0
@@ -21,9 +25,10 @@ const listenEventsSaga = function*() {
 function* handleEvents(events: any) {
   const parcelIds = yield select(getParcelIds)
   const newParcelIds = yield call(() =>
-    getParcelIdsFromEvent(events, parcelIds)
+    getParcelIdsFromEvents(events, parcelIds)
   )
-  yield put(fetchEventsSuccess(events, newParcelIds))
+  const loans = getLoansFromEvents(events)
+  yield put(fetchEventsSuccess(events, newParcelIds, loans))
 }
 
 function* createEventChannel() {
@@ -45,7 +50,7 @@ function* createEventChannel() {
         const event = eth.getContract(contractName).getEvent(eventName)
         const times = 10
         let fromBlock = 0
-        let blockToMove = Math.ceil((latestBlockNumber - 1) / times)
+        let blockToMove = Math.ceil(latestBlockNumber / times)
         let toBlock = blockToMove
         for (let i = 0; i < times; i++) {
           event['getAllByType'](
@@ -62,28 +67,34 @@ function* createEventChannel() {
           toBlock += blockToMove
         }
 
-        event['watchByType']({ toBlock: 'latest' }, (error: any, log: any) => {
-          try {
-            if (!error) handler([log])
-          } catch (e) {
-            console.log(e.message)
-          }
-        })
+        setTimeout(
+          () =>
+            setInterval(
+              () =>
+                event['getAllByType'](
+                  { fromBlock: latestBlockNumber, toBlock: 'latest' },
+                  (error: any, logs: any) => {
+                    const logsCount = logs.length
+                    if (logsCount > 0) {
+                      const blockNumber = logs[logsCount - 1].blockNumber
+                      latestBlockNumber =
+                        blockNumber > latestBlockNumber
+                          ? blockNumber
+                          : latestBlockNumber
+                    }
+                    try {
+                      if (!error) handler(logs)
+                    } catch (e) {
+                      console.log(e.message)
+                    }
+                  }
+                ),
+              60000
+            ),
+          60000
+        )
       }
     }
-    return () => {
-      for (const contractName in contractsData) {
-        const eventNames = contractsData[contractName].eventNames
-        for (let eventName of eventNames) {
-          const event = eth.getContract(contractName).getEvent(eventName)
-          event['stopWatchByType'](
-            { fromBlock: 0, toBlock: 'latest' },
-            (error: any, log: any) => {
-              if (!error) handler(log)
-            }
-          )
-        }
-      }
-    }
+    return () => true
   })
 }

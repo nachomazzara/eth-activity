@@ -5,32 +5,14 @@
   },
   "global": {
     "connecting": "Connecting",
+    "go_back": "Change address",
     "loading": "Loading",
     "no_wallet": "No wallet connected. Please unlock metamask",
     "reconnect": "Reconnect",
     "see_events": "See Events",
     "wallet": "Wallet"
   },
-  "transaction": {
-    "buy": "You bought {parcel_link}",
-    "buy_mana": "You bought {mana} MANA",
-    "cancel": "You cancelled the sale on {parcel_link}",
-    "cancel_mortgage": "You cancel a Mortgage to buy the parcel {parcel_link}",
-    "claim_mortgage_resolution": "You claimed {parcel_link}",
-    "create_estate": "You created the estate {name}",
-    "create_mortgage": "You requested a Mortgage to buy the parcel {parcel_link}",
-    "dissolve_estate": "You dissolved the estate {name}",
-    "edit": "You edited {parcel_link} with the name \"{name}\" and description \"{description}\"",
-    "edit_estate_metadata": "You edited estate {estate_id} with the name \"{name}\" and description \"{description}\"",
-    "edit_estate_parcels_added": "You added {amount} parcels to estate {name}",
-    "edit_estate_parcels_removed": "You removed {amount} parcels from estate {name}",
-    "manage": "You gave {address_link} permission to update the contents of {parcel_link}",
-    "manage_revoked": "You revoked {address_link} permission to update the contents of {parcel_link}",
-    "mortgage_mana": "You {action} the {mortgage_contract_link} to operate MANA on your behalf",
-    "mortgage_rcn": "You {action} the {mortgage_contract_link} to operate RCN on your behalf",
-    "pay_mortgage": "You made a partial payment of {amount} MANA for the mortgage to buy the parcel {parcel_link}",
-    "publish": "You listed {parcel_link} for sale",
-    "transfer": "You transfered {asset_type} {asset_link} to {owner_link}",
-    "transfer_mana": "You transfered {mana} MANA to {address_link}"
+  "activity": {
+    "no_events": "No user events yet"
   }
 }

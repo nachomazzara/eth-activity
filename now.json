@@ -1,5 +1,13 @@
 {
   "name": "eth-activity",
   "alias": "eth-activity.now.sh",
-  "type": "static"
+  "type": "static",
+  "static": {
+    "redirects": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }

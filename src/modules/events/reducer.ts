@@ -17,18 +17,37 @@ export type EventReducerAction =
   | FetchEventSuccessAction
 
 export function data(
-  state = { events: [], parcelIds: {} },
+  state = { events: {}, eventKeys: [], parcelIds: {}, loans: {} },
   action: EventReducerAction
 ) {
   switch (action.type) {
     case FETCH_EVENTS_SUCCESS: {
-      const { events, parcelIds } = action.payload
+      const { events, parcelIds, loans } = action.payload
       return {
         ...state,
-        events: [...state.events, ...events],
+        events: events.reduce(
+          (newEvents, event) => ({
+            ...newEvents,
+            [`${event.event}-${event.transactionHash}-${event.logIndex}`]: event
+          }),
+          state.events
+        ),
+        eventKeys: Array.from(
+          new Set([
+            ...state.eventKeys,
+            ...events.map(
+              (event: any) =>
+                `${event.event}-${event.transactionHash}-${event.logIndex}`
+            )
+          ])
+        ),
         parcelIds: {
           ...state.parcelIds,
           ...parcelIds
+        },
+        loans: {
+          ...state.loans,
+          ...loans
         }
       }
     }

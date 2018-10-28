@@ -1,9 +1,12 @@
 import * as React from 'react'
-// import { eth } from 'decentraland-eth'
-// import { t } from '@dapps/modules/translation/utils'
+import { Link } from 'react-router-dom'
+import { t } from '@dapps/modules/translation/utils'
+import { Loader, Button } from 'decentraland-ui'
+
 import { Props, State } from './ActivityPage.types'
-import { Loader } from 'decentraland-ui'
-// import './ActivityPage.css'
+import { locations } from 'locations'
+import { getAssetImageURL } from 'modules/events/utils'
+import './ActivityPage.css'
 
 const offsetMinutes = 60 * 1000 * 4
 
@@ -43,30 +46,47 @@ export default class ActivityPage extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { isConnecting, isConnected, wallet, isLoading, events } = this.props
+    const {
+      isConnecting,
+      isConnected,
+      isLoading,
+      events,
+      onConnectWallet
+    } = this.props
 
-    const isRopsten = isConnected && wallet.network === 'ropsten'
+    const isFetching = !events || isConnecting || isLoading
 
     return (
       <div className="ActivityPage">
-        {!events || isConnecting || isLoading ? (
-          <Loader active={true} size="massive" />
-        ) : (
-          events.map((event: any, index: number) => (
-            <p
-              style={{
-                background: '#7188bf54',
-                padding: '10px',
-                borderRadius: '15px'
-              }}
-              key={index}
-            >
-              {event}
-            </p>
-          ))
+        <Link className="go-back" to={locations.root()}>
+          {t('global.go_back')}
+        </Link>
+        {isFetching && <Loader active={true} size="massive" />}
+        {!isConnected && (
+          <React.Fragment>
+            <p className="no-events">{t('global.no_wallet')}</p>
+            <Button primary={true} onClick={onConnectWallet}>
+              {t('global.reconnect')}
+            </Button>
+          </React.Fragment>
         )}
-        {isConnecting}
-        {isRopsten}
+        {!isFetching &&
+          isConnected && (
+            <React.Fragment>
+              {events.length > 0 ? (
+                events.map((event: any, index: number) => (
+                  <div key={index} className="event">
+                    {event.assetId && (
+                      <img src={getAssetImageURL(event.assetId, event.type)} />
+                    )}
+                    <p>{event.toString()}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="no-events">{t('activity.no_events')}</p>
+              )}
+            </React.Fragment>
+          )}
       </div>
     )
   }

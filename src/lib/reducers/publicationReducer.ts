@@ -1,4 +1,8 @@
-import { getAssetTypeFromEvent, getAssetIdFromEvent } from './utils'
+import {
+  ASSET_TYPES,
+  getAssetTypeFromEvent,
+  getAssetIdFromEvent
+} from './utils'
 import { getContractAddresses, getEventNames } from 'modules/events/utils'
 
 let contractAddresses: any
@@ -39,7 +43,8 @@ export function publicationReducer(event: any, parcelId: any): string {
 function reduceMarketplace(event: any, parcelId: any): string {
   const name = event.event
   const assetType = getAssetTypeFromEvent(event)
-  const assetId = assetType === 'LAND' ? parcelId : getAssetIdFromEvent(event)
+  const assetId =
+    assetType === ASSET_TYPES.LAND ? parcelId : getAssetIdFromEvent(event)
 
   switch (name) {
     case eventNames.AuctionCreated:

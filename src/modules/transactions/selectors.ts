@@ -1,8 +1,19 @@
 import { createSelector } from 'reselect'
 
 import { RootState } from 'types'
-import { getEvents, getParcelIds } from 'modules/events/selectors'
-import { orderAlgo } from 'modules/events/utils'
+import {
+  getEvents,
+  getParcelIds,
+  getLoans,
+  getMortgages
+} from 'modules/events/selectors'
+import {
+  orderAlgo,
+  getIdFromEventArgs,
+  isMortgageEvent,
+  getEstateIdFromEvent
+} from 'modules/events/utils'
+import { getAssetTypeFromEvent, ASSET_TYPES } from 'lib/reducers/utils'
 import reducers from 'lib/reducers'
 
 export const getState = (state: RootState) => state.transactions
@@ -17,8 +28,10 @@ export const getTransactionByAddress = (address: string) =>
     getTransactions,
     getEvents,
     getParcelIds,
-    (txs, events, parcelIds) => {
-      const strEvents: string[] = []
+    getLoans,
+    getMortgages,
+    (txs, events, parcelIds, loans, mortgages) => {
+      const strEvents: any[] = []
       if (!txs || !txs[address]) {
         return strEvents
       }
@@ -31,17 +44,33 @@ export const getTransactionByAddress = (address: string) =>
       accountEvents.sort(orderAlgo)
 
       for (let event of accountEvents) {
+        let assetIdArg = getIdFromEventArgs(event)
+
+        if (isMortgageEvent(event)) {
+          const mortgageAsset =
+            loans[event.args._index || event.args.loanId] ||
+            mortgages[event.args._id]
+          assetIdArg = mortgageAsset ? mortgageAsset.parcel_id : assetIdArg
+        }
+
+        const parcelId = parcelIds ? parcelIds[assetIdArg] : ''
+        let coordinate = ''
+
+        if (parcelId) {
+          coordinate = `(${parcelId[0]},${parcelId[1]})`
+        }
+        const type = getAssetTypeFromEvent(event)
         for (let r of reducers) {
-          const parcelIdArg =
-            event.args.assetId || event.args.landId || event.args._landId
-          const parcelId = parcelIds ? parcelIds[parcelIdArg] : ''
-          let coordinate = ''
-          if (parcelId) {
-            coordinate = `(${parcelId[0]},${parcelId[1]})`
-          }
-          strEvents.push((r as any)(event, coordinate))
+          strEvents.push({
+            toString: () => (r as any)(event, coordinate),
+            assetId:
+              type === ASSET_TYPES.LAND
+                ? coordinate
+                : getEstateIdFromEvent(event) || assetIdArg,
+            type
+          })
         }
       }
-      return strEvents.filter((str: string) => str.length > 0)
+      return strEvents.filter((event: string) => event.toString().length > 0)
     }
   )

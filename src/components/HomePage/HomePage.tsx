@@ -9,7 +9,7 @@ export default class HomePage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      address: ''
+      address: props.wallet && props.wallet.address ? props.wallet.address : ''
     }
   }
 

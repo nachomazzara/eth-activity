@@ -9,10 +9,11 @@ export const FETCH_EVENTS_FAILURE = '[Failure] Fetch events'
 export const fetchEventsRequest = (address: BaseWallet['address']) =>
   action(FETCH_EVENTS_REQUEST, { address })
 
-export const fetchEventsSuccess = (events: any[], parcelIds: any) =>
+export const fetchEventsSuccess = (events: any[], parcelIds: any, loans: any) =>
   action(FETCH_EVENTS_SUCCESS, {
     events,
-    parcelIds
+    parcelIds,
+    loans
   })
 
 export const fetchEventSuccess = (event: any, parcelIds: any) =>

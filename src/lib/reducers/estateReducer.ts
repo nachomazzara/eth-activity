@@ -4,7 +4,7 @@ import { getContractAddresses, getEventNames } from 'modules/events/utils'
 let contractAddresses: any
 let eventNames: any
 
-export function estateReducer(event: any, parcelId: any): string {
+export function estateReducer(event: any): string {
   const { address } = event
 
   contractAddresses = getContractAddresses()
@@ -12,14 +12,14 @@ export function estateReducer(event: any, parcelId: any): string {
 
   switch (address) {
     case contractAddresses.EstateRegistry: {
-      return reduceEstateRegistry(event, parcelId)
+      return reduceEstateRegistry(event)
     }
     default:
       return ''
   }
 }
 
-function reduceEstateRegistry(event: any, parcelId: any): string {
+function reduceEstateRegistry(event: any): string {
   const name = event.event
 
   switch (name) {
@@ -36,38 +36,14 @@ function reduceEstateRegistry(event: any, parcelId: any): string {
       const attrsStr = JSON.stringify(data)
 
       return `[${name}] Creating Estate with token id "${_estateId}" and owner "${_owner}" with "${attrsStr}`
-
-      // await Estate.insert({
-      //   id: _estateId,
-      //   token_id: _estateId,
-      //   owner: _owner.toLowerCase(),
-      //   data: { ...data, parcels: [] },
-      //   last_transferred_at,
-      //   tx_hash
-      // })
-    }
-    case eventNames.AddLand: {
-      if (!parcelId) return ''
-
-      const { _estateId } = event.args
-
-      // const [x, y] = Parcel.splitId(parcelId)
-      // const parcel = { x: Number(x), y: Number(y) }
-
-      return `[${name}] Updating Estate id: "${_estateId}" add land ${parcelId}`
-    }
-    case eventNames.RemoveLand: {
-      if (!parcelId) return ''
-
-      const { _estateId } = event.args
-
-      return `[${name}] Updating Estate id: "${_estateId}" remove land ${parcelId}`
     }
     case eventNames.Transfer: {
-      const { _to } = event.args
+      const { _from, _to } = event.args
       const estateId = event.args._tokenId
 
-      return `[${name}] Transferring Estate with token id "${estateId}" ownership to "${_to}"`
+      return _from != '0x0000000000000000000000000000000000000000'
+        ? `[${name}] Transferring Estate with token id "${estateId}" ownership to "${_to}"`
+        : ''
     }
     case eventNames.UpdateOperator: {
       const { _operator, _estateId } = event.args
