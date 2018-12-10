@@ -148,24 +148,29 @@ export default class AuctionPage extends React.Component {
     const { tokensUsed, tokensTransferred, tokensBurned } = this.state as any
     return (
       <React.Fragment>
-        <h2>{'Amount of token used'}</h2>
+        <h2>{'Amount of tokens used'}</h2>
         {tokensUsed &&
           Object.keys(tokensUsed).map((token: any) => (
             <p key={token}>{`${TOKENS[token].symbol} : ${
               token === MANA_ADDRESS
-                ? parseFloat(tokensBurned[token]) -
-                  parseFloat(tokensUsed[token])
+                ? isNaN(
+                    parseFloat(tokensBurned[token]) -
+                      parseFloat(tokensUsed[token])
+                  )
+                  ? 0
+                  : parseFloat(tokensBurned[token]) -
+                    parseFloat(tokensUsed[token])
                 : tokensUsed[token] // total mana burned - used for conversion
             }`}</p>
           ))}
-        <h2>{'Amount of token burned'}</h2>
+        <h2>{'Amount of tokens burned'}</h2>
         {tokensBurned &&
           Object.keys(tokensBurned).map((token: any) => (
             <p key={token}>{`${TOKENS[token].symbol} : ${
               tokensBurned[token]
             }`}</p>
           ))}
-        <h2>{'Amount of token transferred'}</h2>
+        <h2>{'Amount of tokens transferred'}</h2>
         {tokensTransferred &&
           Object.keys(tokensTransferred).map((token: any) => (
             <p key={token}>

@@ -17,7 +17,7 @@ export function getContractsToConnect() {
 
 export function getContractsObject() {
   let network = 'MAINNET'
-  if ((window as any).web3.version.network !== '1') {
+  if ((window as any).web3 && (window as any).web3.version.network !== '1') {
     network = 'ROPSTEN'
   }
   return Object.freeze({
@@ -133,7 +133,7 @@ export async function getParcelIdsFromEvents(
 
 export function getAssetImageURL(assetId: string, type: string) {
   let network = 'MAINNET'
-  if ((window as any).web3.version.network !== '1') {
+  if ((window as any).web3 && (window as any).web3.version.network !== '1') {
     network = 'ROPSTEN'
   }
 

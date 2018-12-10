@@ -2,7 +2,7 @@ import { env } from 'decentraland-commons'
 
 export async function getTransactions(address: string): Promise<{}> {
   let network = 'MAINNET'
-  if ((window as any).web3.version.network !== '1') {
+  if ((window as any).web3 && (window as any).web3.version.network !== '1') {
     network = 'ROPSTEN'
   }
   console.log('using network: ', network)
