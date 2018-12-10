@@ -3,7 +3,7 @@
   "alias": "eth-activity.now.sh",
   "type": "static",
   "static": {
-    "redirects": [
+    "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"

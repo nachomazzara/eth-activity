@@ -4,6 +4,7 @@ export interface Locations {
 
 export const locations: Locations = {
   root: () => '/',
+  auction: () => '/',
   activity: address => `/events/${address}`,
   activityPage: () => '/events/:address'
 }

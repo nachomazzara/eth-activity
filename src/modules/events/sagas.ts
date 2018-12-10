@@ -14,7 +14,10 @@ import { getParcelIds } from './selectors'
 let latestBlockNumber: number = 0
 
 export function* eventsSaga() {
-  yield takeEvery(CONNECT_WALLET_SUCCESS, listenEventsSaga)
+  yield true
+  if (1 == latestBlockNumber) {
+    yield takeEvery(CONNECT_WALLET_SUCCESS, listenEventsSaga)
+  }
 }
 
 const listenEventsSaga = function*() {
